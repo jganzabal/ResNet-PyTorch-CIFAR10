@@ -88,7 +88,7 @@ def main(args):
     print('Final test accuracy:')
     check_accuracy(model, loader_test)
 
-def check_accuracy(model, loader):
+def check_accuracy(model, loader, gpu_dtype):
     num_correct = 0
     num_samples = 0
     model.eval()
@@ -104,7 +104,7 @@ def check_accuracy(model, loader):
     acc = float(num_correct) / num_samples
     print('Got %d / %d correct (%.2f)' % (num_correct, num_samples, 100 * acc))
 
-def train(loader_train, model, criterion, optimizer):
+def train(loader_train, model, criterion, optimizer, gpu_dtype, print_every=10):
     model.train()
     for t, (X, y) in enumerate(loader_train):
         X_var = Variable(X.type(gpu_dtype))
@@ -113,7 +113,7 @@ def train(loader_train, model, criterion, optimizer):
         scores = model(X_var)
 
         loss = criterion(scores, y_var)
-        if (t+1) % args.print_every == 0:
+        if (t+1) % print_every == 0:
             print('t = %d, loss = %.4f' % (t+1, loss.data[0]))
 
         optimizer.zero_grad()
